@@ -35,9 +35,12 @@ Nfs.prototype.ls = function(path_str){
 Nfs.prototype.rename = function(path_str, newFilename){
     let file_node = this.ls(path_str); 
 
-    file_node.filename = newFilename; 
-
-    return this.store2disk(); 
+    if (!file_node){
+        return error(4001, [path_str]);
+    } else {
+        file_node.filename = newFilename; 
+        return this.store2disk(); 
+    }
 }
 
 /**
@@ -49,12 +52,16 @@ Nfs.prototype.rm = function(path_str){
         , path_dir = path_str.substring(0, temp)
         , filename = path_str.split('/').pop()
         , file_node = this.ls(path_dir)
-    
-    // filter 删掉结点 
-    file_node.files = file_node.files.filter(e => e.filename !== filename); 
 
-    // 存储 
-    return this.store2disk(); 
+    let notExist = file_node.files.every(e => e.filename !== filename); 
+    if (notExist){
+        return error(4001, [path_str]);
+    } else {
+        // filter 删掉结点 
+        file_node.files = file_node.files.filter(e => e.filename !== filename); 
+        // 存储 
+        return this.store2disk(); 
+    }
 }
 
 /**
@@ -86,11 +93,19 @@ Nfs.prototype.store2disk = function(){
     ); 
 }
 
+Nfs.prototype.getA2List = function(A2){
+    
+}
+
 Nfs.prototype.getFileIndex = function(node){
     let BLOCK_SIZE = this.disk.BLOCK_SIZE; 
     
     if (node.size <= BLOCK_SIZE){
         return [node.A1]; 
+    } else {
+        return [node.A1].concat(
+            this.getA2List(node.A2)
+        ); 
     }
 }
 
@@ -124,9 +139,7 @@ Nfs.prototype.touch = function(path_str, ext){
     let conflict = dir.files.some(e => e.filename === filename); 
 
     if (conflict){
-        return Promise.reject(
-            error(4000, [path_str])
-        ); 
+        return error(4000, [path_str]);
     } else {
         dir.files.push({
             filename, 
