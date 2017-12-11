@@ -1,4 +1,6 @@
 // nfs.js
+const error = require('./error'); 
+
 /**
  * @description 构造实例  
  * @param {Object} nfs_data
@@ -105,5 +107,41 @@ Nfs.prototype.read = function(path_str){
         ); 
     }
 }
+
+/**
+ * @description create a blank file to path_str
+ * @param {String} path_str
+ * @param {String} ext
+ */
+Nfs.prototype.touch = function(path_str, ext){
+    // let path = path_str.split('/').slice(1).filter(e => e);
+    const temp = path_str.lastIndexOf('/')
+        , path_dir = path_str.substring(0, temp)
+        , filename = path_str.split('/').pop()
+        , dir = this.ls(path_dir)
+
+    // Touch 
+    let conflict = dir.files.some(e => e.filename === filename); 
+
+    if (conflict){
+        return Promise.reject(
+            error(4000, [path_str])
+        ); 
+    } else {
+        dir.files.push({
+            filename, 
+            ext, 
+            isDirectory: false,
+            cTime: Date.now(), 
+            size: 0, 
+            A1: null, 
+            A2: null
+        }); 
+    }
+
+    return this.store2disk(); 
+}
+
+
 
 module.exports = Nfs; 
