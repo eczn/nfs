@@ -1,7 +1,8 @@
 // error.js
 
 let errorTable = {
-    "4000": "创建 $$ 的时候发现文件重复"
+    "4000": "创建 $$ 的时候发现文件重复", 
+    "4001": "$$ 不存在 !"
 }
 
 module.exports = function(code, args = []){
@@ -11,8 +12,8 @@ module.exports = function(code, args = []){
         return acc + cur + (args[idx] || ''); 
     }, ''); 
 
-    return {
+    return Promise.reject({
         code, 
         msg: msg
-    }
+    }); 
 }
