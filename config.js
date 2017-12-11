@@ -10,6 +10,8 @@ module.exports = {
     DISK_SIZE: 20971520, 
     // bs
     BLOCK_SIZE: 4096,
+    // bc 
+    BLOCK_COUNT: (20971520 - 4194304) / 4096, 
     // 4 MB nfs 
     NFS_SIZE: 4194304, 
     // 16 MB reamin 
