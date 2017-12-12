@@ -79,6 +79,28 @@ Disk.prototype.write = function(block_position, buf){
     ); 
 }
 
+/**
+ * @description 写入 buf 到 block_positions 里 
+ * @param {Array<int>} block_positions 
+ * @param {Buffer} buf 
+ */
+Disk.prototype.writeList = function(block_positions, buf){
+    let { BLOCK_SIZE } = this; 
+
+    return Promise.all(
+        block_positions.map((block_position, i) => {
+            let sub_buf = buf.slice(
+                i * BLOCK_SIZE,
+                (i + 1) * BLOCK_SIZE
+            ); 
+
+            return this.write(block_position, sub_buf); 
+        })
+    ).then(counts => {
+        return counts.reduce((sum, count) => sum + count, 0); 
+    }); 
+}
+
 Disk.prototype.writeRaw = function(buf, position){
     return fs.write(
         this.disk_fd, 
