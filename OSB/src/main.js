@@ -3,8 +3,12 @@
 import Vue from 'vue';
 import App from './App';
 import router from './router';
+import OSB from './osb'; 
+import FONT from './font'; 
 
 Vue.config.productionTip = false;
+
+Vue.use(OSB); 
 
 /* eslint-disable no-new */
 new Vue({
