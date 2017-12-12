@@ -1,8 +1,5 @@
-import { Buffer } from 'buffer';
-
 // nfs.js
-const error = require('./error')
-    , fatController = require('./fat_controller')
+const error = require('./error'); 
 
 /**
  * @description 构造实例  
@@ -253,6 +250,41 @@ Nfs.prototype.touch = function(path_str, ext){
     return this.store2disk(); 
 }
 
+/**
+ * @description 列出 nfs 磁盘信息
+ */
+Nfs.prototype.df = function(){
+    let {
+        DISK_BASE,
+        DISK_LOCATION,
+        DISK_SIZE,
+        BLOCK_SIZE,
+        BLOCK_COUNT,
+        NFS_SIZE,
+        RAW_SIZE
+    } = this.disk;
 
+    let df = {
+        DISK_BASE,
+        DISK_LOCATION,
+        DISK_SIZE,
+        BLOCK_SIZE,
+        BLOCK_COUNT,
+        NFS_SIZE,
+        RAW_SIZE
+    }
+
+    df.REMAIN_SIZE = this.FAT.reduce((sum, cur) => {
+        if (cur === 0){
+            sum = sum + BLOCK_SIZE; 
+        }
+
+        return sum; 
+    }, 0); 
+
+    df.USED_SIZE = (df.RAW_SIZE - df.REMAIN_SIZE) + df.NFS_SIZE; 
+
+    return df; 
+}
 
 module.exports = Nfs; 
