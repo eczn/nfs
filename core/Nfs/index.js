@@ -100,14 +100,15 @@ Nfs.prototype.rm = function(path_str){
     const temp = path_str.lastIndexOf('/')
         , path_dir = path_str.substring(0, temp)
         , filename = path_str.split('/').pop()
-        , file_node = this.ls(path_dir)
+        , dir_node = this.ls(path_dir)
+        , file_node = this.ls(path_str)
 
-    let notExist = file_node.files.every(e => e.filename !== filename); 
+    let notExist = dir_node.files.every(e => e.filename !== filename); 
     if (notExist){
         return error(4001, [path_str]);
     } else {
         // filter 删掉结点 
-        file_node.files = file_node.files.filter(e => e.filename !== filename); 
+        dir_node.files = dir_node.files.filter(e => e.filename !== filename); 
 
         // To Release Data; 
         this.fatRelease(file_node.A1); 
