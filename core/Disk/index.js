@@ -5,6 +5,10 @@ const init = require('./init')
 // Export Disk Construtor 
 module.exports = Disk
 
+/**
+ * @description Disk 构造函数
+ * @param {Object} config 
+ */
 function Disk(config){
     // this.config = config; 
     Object.assign(this, config);    
