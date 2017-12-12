@@ -256,6 +256,18 @@ Nfs.prototype.touch = function(path_str, ext){
 }
 
 /**
+ * @description 创建并初始化文件内容 
+ * @param {String} path_str 
+ * @param {String} ext 
+ * @param {Buffer} buf 
+ */
+Nfs.prototype.touchAndWrite = function(path_str, ext, buf){
+    return this.touch(path_str, ext).then(ok => {
+        return this.write(path_str, buf);
+    }); 
+}
+
+/**
  * @description 在 node 上创建一个文件夹 
  * @param {Object} node 
  * @param {String} filename 
