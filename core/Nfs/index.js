@@ -12,6 +12,16 @@ function Nfs(nfs_data, disk){
 }
 
 /**
+ * @description just test ^v^
+ */
+Nfs.prototype.ping = function(){
+    let str = 'pong ~~ nfs'; 
+    console.log(str);
+
+    return str; 
+}
+
+/**
  * @description 申请一定空间的块  
  * @param {int} size 
  */
