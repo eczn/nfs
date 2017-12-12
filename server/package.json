@@ -1,0 +1,21 @@
+{
+  "name": "nfs-server",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "body-parser": "~1.18.2",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.9",
+    "ejs": "~2.5.7",
+    "express": "~4.15.5",
+    "jsonwebtoken": "^8.1.0",
+    "morgan": "~1.9.0",
+    "serve-favicon": "~2.4.5",
+    "sha1": "^1.1.1",
+    "then-fs": "^2.0.0",
+    "uuid": "^3.1.0"
+  }
+}
