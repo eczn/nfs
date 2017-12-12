@@ -22,5 +22,10 @@ export default {
 </script>
 
 <style>
-
+* {
+	margin: 0; 
+	padding: 0; 
+	color: #555; 
+	font-family: "Consolas", "Menlo"; 
+}
 </style>
