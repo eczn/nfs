@@ -1,7 +1,10 @@
 // responser/index.js
 let responser = {}; 
 let code2msg = {
-	2000: '接口调用成功'
+	2000: '接口调用成功', 
+	5000: 'err',
+	4000: '未登陆或者登陆过期',
+	4001: '账号密码错误'
 }
 
 responser.send = code => (res, data = {}, error) => {
