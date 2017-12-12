@@ -12,8 +12,7 @@ module.exports = {
                 isDirectory: false, 
                 cTime: Date.now(), 
                 size: 10,
-                A1: 0, 
-                A2: null
+                A1: [ 0 ]
             }
         ]
     }, 
