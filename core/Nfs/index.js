@@ -108,6 +108,10 @@ Nfs.prototype.rm = function(path_str){
     } else {
         // filter 删掉结点 
         file_node.files = file_node.files.filter(e => e.filename !== filename); 
+
+        // To Release Data; 
+        this.fatRelease(file_node.A1); 
+
         // 存储 
         return this.store2disk(); 
     }
