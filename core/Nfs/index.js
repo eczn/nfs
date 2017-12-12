@@ -256,6 +256,46 @@ Nfs.prototype.touch = function(path_str, ext){
 }
 
 /**
+ * @description 在 node 上创建一个文件夹 
+ * @param {Object} node 
+ * @param {String} filename 
+ */
+Nfs.prototype._mkdirOnNode = function(node, filename){
+    let dir_node = {
+        isDirectory: true,
+        cTime: Date.now(), 
+        filename: filename, 
+        files: []
+    }
+
+    node.files.push(dir_node); 
+
+    return dir_node; 
+}
+
+/**
+ * @description 在 path_str 的父级目录创建文件夹，非递归 
+ * @param {String} path_str 
+ */
+Nfs.prototype.mkdir = function(path_str){
+    const temp = path_str.lastIndexOf('/')
+        , path_dir = path_str.substring(0, temp)
+        , filename = path_str.split('/').pop()
+        , dir = this.ls(path_dir)
+
+    // Touch 
+    let conflict = dir.files.some(e => e.filename === filename); 
+
+    if (conflict) {
+        return error(4000, [path_str]);
+    } else {
+        this._mkdirOnNode(dir, filename); 
+    }
+
+    return this.store2disk(); 
+}
+
+/**
  * @description 列出 nfs 磁盘信息
  */
 Nfs.prototype.df = function(){
