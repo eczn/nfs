@@ -33,7 +33,7 @@ Nfs.prototype.fatAllocBlock = function(need_block){
     for (let i = 0; i < FAT.length; i++){
         let info = FAT[i]; 
         if (info === 0){
-            res.psuh(i); 
+            res.push(i); 
         }
         // 如果收集够了就结束 
         if (res.length === need_block){
