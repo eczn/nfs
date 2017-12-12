@@ -1,6 +1,6 @@
 // init.js
 const fs = require('then-fs')
-    , mkdir = require('../../utils/mkdir')
+    , mkdir = require('../utils/mkdir')
     , nfsMinimum = require('./nfs_minimum')
     , nfs_buf = Buffer.from(JSON.stringify(nfsMinimum), "binary");
 
