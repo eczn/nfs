@@ -6,6 +6,7 @@
 </template>
 
 <script>
+import http from './utils/http.client'; 
 
 export default {
 	name: 'app',
@@ -13,7 +14,9 @@ export default {
 		return {}
 	},
 	created(){
-		
+		http.get('/api/ping').then(ok => {
+			console.log(ok)
+		})
 	},
 	methods: {
 		
