@@ -1,5 +1,6 @@
 // http.client.js
 import axios from 'axios';
+import $router from '../router'; 
 import logger from './logger';
 
 let http = {};
@@ -43,9 +44,11 @@ http.send = method => function(path, query = {}, data = {}, cb){
 	return axios[method](path, toSend).then(httpRes => {
 		logger.res(method, path, httpRes);
 
-		cb && cb(httpRes.data);
-
-		if (httpRes.data.code === -1) window.location.href = '/api/ban'; 
+		if (httpRes.data.code === 4000){
+			$router.replace('/login'); 
+		} else {
+			cb && cb(httpRes.data);
+		}
 
 		return httpRes.data;
 	}, err => {
