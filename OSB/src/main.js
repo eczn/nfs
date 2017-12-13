@@ -5,10 +5,12 @@ import App from './App';
 import router from './router';
 import OSB from './osb'; 
 import FONT from './font'; 
+import Finder from './Finder'
 
 Vue.config.productionTip = false;
 
 Vue.use(OSB); 
+Vue.use(Finder); 
 
 /* eslint-disable no-new */
 new Vue({

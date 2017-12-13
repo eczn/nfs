@@ -14,9 +14,7 @@ export default {
 		return {}
 	},
 	created(){
-		http.get('/api/ping').then(ok => {
-			console.log(ok)
-		})
+		http.get('/api/nfs');
 	},
 	methods: {
 		
