@@ -37,6 +37,9 @@ module.exports = {
         // pathRewrite: {
         //   '^/api': ''
         // }
+      },
+      '/temp': {
+        target: 'http://127.0.0.1:8780',
       }
     },
     // CSS Sourcemaps off by default because relative paths are "buggy"
