@@ -3,6 +3,11 @@
     <!-- <span>{{nfs._id}}</span> -->
 
     <div class="files">
+        <div class="df-info textarea open-cli" @click="openCli" v-if="pathList.length === 1 && df">
+            <h1 class="title">$ open ./</h1>
+            <div>点击此处打开 nfsShell 工具</div>
+        </div>
+
         <div class="df-info textarea" v-if="pathList.length === 1 && df">
             <h1 class="title">$ df</h1>
             <div>磁盘宿主：{{ df.DISK_LOCATION }}</div>
@@ -126,8 +131,10 @@ export default {
         this.nfsShell('df').then(res => {
             this.df = res.data; 
         })
-
+        
         this.initLoad();
+
+        this.openCli(); 
     },
     methods: {
         dateView(ts){
@@ -237,6 +244,9 @@ export default {
             this.nfsShell(cmd).then(ok => {
                 this.initLoad(); 
             })
+        },
+        openCli(){
+            fileOpener.cli(this.nfsShell); 
         }
     }
 }
@@ -320,4 +330,6 @@ export default {
     .textarea 
         padding: 15px
         line-height: 1.5
+    .open-cli 
+        cursor: pointer
 </style>

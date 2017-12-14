@@ -14,13 +14,16 @@ function PopupItem(option){
 	this.active = false; 
 	this.dropping = false; 
 
-	option.style = {
+	option.style = option.style || {}; 
+	option.style = Object.assign({
 		left: 150 + 60 * count + 'px',
 		top: 100 + 40 * count + 'px', 
 		width: '600px',
 		height: '700px',
 		zIndex: 200 + count * 10
-	}; 
+	}, option.style); 
+
+	option.style.backgroundColor = option.style.backgroundColor || '#FFF'; 
 
 	this.title = option.title || ''; 
 

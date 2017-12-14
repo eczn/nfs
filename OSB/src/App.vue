@@ -23,11 +23,14 @@ export default {
 </script>
 
 <style>
+body {
+	color: #555; 
+	font-family: "Consolas", "Menlo"; 
+}
+
 * {
 	margin: 0; 
 	padding: 0; 
-	color: #555; 
-	font-family: "Consolas", "Menlo"; 
 	user-select: none; 
 }
 

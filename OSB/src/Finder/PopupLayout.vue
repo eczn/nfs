@@ -19,7 +19,9 @@
 				@mouseup="dropEnd(item, $event)"
 				@mouseleave="dropOutside(item, $event)"
 				:style="{
-					
+					backgroundColor: item.style.backgroundColor,
+					borderBottom: item.style.border,
+					color: item.style.color
 				}"
 				class="folder-header">
 				{{ item.title || 'Finder' }}
@@ -42,6 +44,12 @@
 					@mousedown="moveStart(item, $event)"
 					@mousemove="moveMove(item, $event)"
 					@mouseup="moveEnd(item, $event)"
+					:style="{
+						backgroundColor: (item.style.bottom === 0) ?
+							'none' : (item.style.backgroundColor || '#FFF'),
+						borderTop: item.style.border || '1px solid #DDD',
+						bottom: item.style.bottom === 0 ? 0 : item.style.bottom || '-2em'
+					}"
 				></div>
 			</div>
 			<!-- </transition> -->
@@ -52,10 +60,10 @@
 <script>
 import PopupController from './PopupController'; 
 
-window.addEventListener('contextmenu', function(e){
-	e.preventDefault();
-	console.log(e)
-})
+// window.addEventListener('contextmenu', function(e){
+// 	e.preventDefault();
+// 	console.log(e)
+// })
 
 export default {
 	name: 'popup-layout', 
@@ -80,8 +88,12 @@ export default {
 		console.log($refs)
 	},
 	methods: {
-		toTop(idx){
-			this.list.push(this.list.splice(idx, 1)[0])
+		toTop(selected_idx){
+			// this.list.push(this.list.splice(idx, 1)[0]); 
+			this.list.forEach((e, idx) => {
+				e.style.zIndex = 200 + idx * 10; 
+			});
+			this.list[selected_idx].style.zIndex = 200 + this.list.length * 10; 
 		},
 		dropStart(folder, e){
 			// console.log(e); 
@@ -157,9 +169,9 @@ export default {
 	/* top: 100px;  */
 	/* left: 200px; */
 	/* border: 1px solid rgba(0, 0, 0, 0.1); */
-	box-shadow: 0 96px 64px -24px rgba(0, 0, 0, .3); 
+	box-shadow: 0 64px 64px 20px rgba(0, 0, 0, .3); 
 	box-sizing: border-box; 
-	background-color: #FFF;
+	/* background-color: #FFF; */
 	/* overflow: hidden; */
 }
 
@@ -170,7 +182,7 @@ export default {
 	top: -36px; 
 	height: 36px; 
 	line-height: 36px; 
-	background-color: #FFF; 
+	/* background-color: #FFF;  */
 	border-bottom: 1px solid #DDD; 
 	box-sizing: border-box; 
 	padding-left: 1em;
@@ -179,7 +191,6 @@ export default {
 .resizer {
 	position: absolute; 
 	cursor:	nwse-resize;
-	bottom: -2em;
 	right: 0px; 
 	width: 100%;
 	height: 2em;
@@ -188,9 +199,8 @@ export default {
 	background-size: 16px; 
 	background-repeat: no-repeat; 
 	background-position: right bottom; 
-	background-color: #FFF; 
+	/* background-color: #FFF;  */
 	background-image: url('../assets/resize.png');
-	border-top: 1px solid #DDD; 
 }
 
 .modal-outter {
