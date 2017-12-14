@@ -6,13 +6,22 @@ function getPPP(){
 }
 
 let PopupController = {}
+PopupController.getPPP = getPPP; 
+
 let count = 0; 
 
 function PopupItem(option){
 	this.active = false; 
 	this.dropping = false; 
-	this.left = '200px'; 
-	this.top = '100px';
+
+	option.style = {
+		left: 150 + 60 * count + 'px',
+		top: 100 + 40 * count + 'px', 
+		width: '600px',
+		height: '700px',
+		zIndex: 200 + count * 10
+	}; 
+
 	this.title = option.title || ''; 
 
 	this.pid = option.type + '-' + count; 

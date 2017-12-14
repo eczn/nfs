@@ -13,6 +13,7 @@ PPP.install = function(Vue, option){
     PopupLayout.el = $dom_root_ppp; 
 
     let $ppp = new Vue(PopupLayout); 
+    PPP.$ = () => $ppp; 
     Vue.prototype.$ppp = $ppp; 
 }
 
