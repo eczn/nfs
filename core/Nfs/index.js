@@ -351,6 +351,8 @@ Nfs.prototype.df = function(){
 
     df.USED_SIZE = (df.RAW_SIZE - df.REMAIN_SIZE) + df.NFS_SIZE; 
 
+    df.USER_USED_SIZE = df.USED_SIZE - df.NFS_SIZE; 
+
     return df; 
 }
 
