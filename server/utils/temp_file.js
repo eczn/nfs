@@ -6,14 +6,16 @@ const fs = require('then-fs')
 
 let temp = {};
 
-temp.add = function(buf){
+temp.add = function(buf, ext){
+    let toAdd = ext ? `.${ext}` : ''; 
+
     let fileName = uuid(); 
 
     return fs.writeFile(
-        path.join(PUBLIC_TEMP, fileName), 
+        path.join(PUBLIC_TEMP, fileName + toAdd), 
         buf
     ).then(ok => {
-        return `/temp/${fileName}`;
+        return `/temp/${fileName}${toAdd}`;
     })
 }
 
