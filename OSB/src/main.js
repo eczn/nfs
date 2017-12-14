@@ -12,6 +12,8 @@ Vue.config.productionTip = false;
 Vue.use(OSB); 
 Vue.use(Finder); 
 
+Vue.prototype.$eBus = new Vue(); 
+
 /* eslint-disable no-new */
 new Vue({
 	el: '#app',
