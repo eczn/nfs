@@ -43,6 +43,8 @@ router.post('/cmd', function(req, res){
     let preprocess  = req.body.preprocess; 
     let list = cmd.split(' '); 
 
+    console.log(cmd, preprocess)
+
     // 如果有 buf 数据 
     if (buf_base64){
         let buf = Buffer.from(buf_base64, 'base64'); 
@@ -52,18 +54,23 @@ router.post('/cmd', function(req, res){
 
     let todo = list[0]; 
     let args = list.slice(1); 
+    let nfs = null; 
+    diskSet.open(_id).then(_nfs => {
+        nfs = _nfs;
 
-    diskSet.open(_id).then(nfs => {
-        return nfs[todo].apply(nfs, args); 
+        return nfs[todo].apply(nfs, args)
     }).then(nfs_result => {
         // console.log(nfs_result); 
         if (Buffer.isBuffer(nfs_result)){
             if (preprocess === 'url'){
-                temp.add(nfs_result).then(url => {
+                let lsArgs = args.map(e => e); 
+                let file = nfs['ls'].apply(nfs, args); 
+                temp.add(nfs_result, file.ext).then(url => {
+                    let data = nfs_result.toJSON();
+                    data.url = url; 
                     res.json({
                         code: 2000, 
-                        data: nfs_result.toJSON(), 
-                        url: url, 
+                        data: data, 
                         msg: 'nfs 调用成功'
                     }); 
                 }); 
