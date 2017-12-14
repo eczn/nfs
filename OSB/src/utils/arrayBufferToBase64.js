@@ -8,4 +8,8 @@ function _arrayBufferToBase64( buffer ) {
     return window.btoa( binary );
 }
 
+_arrayBufferToBase64.as = (buf, type = 'image/png') => {
+    return `data:${type};base64,` + _arrayBufferToBase64(buf);
+}
+
 export default _arrayBufferToBase64; 
