@@ -26,38 +26,43 @@
         ></file>
     </div>
 
-    <div class="preview" v-if="preview && df">
-        <div class="file-preview" v-if="!preview.file.isDirectory">
-            <div>{{ preview.file.ext }} 文件</div>
-            <div>文件大小：{{ preview.file.size }} 字节</div>
-            <div>实际占用：{{ preview.file.A1.length * df.BLOCK_SIZE }} 字节</div>
-            <div>创建于：{{ dateView(preview.file.cTime) }}</div>
-            <div class="txt" v-if="preview.file.ext === 'txt'">
-                {{ preview.data.map(e => String.fromCharCode(e)).join('') || '空文件' }}
+    <transition name="preview-load">
+        <div class="preview" v-if="preview && df">
+            <div class="file-preview" v-if="!preview.file.isDirectory">
+                <div>{{ preview.file.ext }} 文件</div>
+                <div>文件大小：{{ preview.file.size }} 字节</div>
+                <div>实际占用：{{ preview.file.A1.length * df.BLOCK_SIZE }} 字节</div>
+                <div>创建于：{{ dateView(preview.file.cTime) }}</div>
+                <div class="txt" v-if="preview.file.ext === 'txt'">
+                    {{ preview.data.map(e => String.fromCharCode(e)).join('') || '空文件' }}
+                </div>
+                <div class="png" v-else-if="preview.file.ext === 'png'">
+                    <img :src="preview.url" />
+                </div>
+                <div class="png" v-else-if="preview.file.ext === 'jpg'">
+                    <img :src="preview.url" />
+                </div>
+                <div v-else>该文件不支持预览</div>
             </div>
-            <div class="png" v-else-if="preview.file.ext === 'png'">
-                <img :src="toDataURL(preview.data)" />
+            <div class="dir-preview" v-else>
+                <div>{{ preview.file.filename }} 文件夹</div>
+                <div>子文件：{{ preview.file.files.length }} 个</div>
+                <div>创建于：{{ dateView(preview.file.cTime) }}</div>
             </div>
-            <div v-else>该文件不支持预览</div>
-        </div>
-        <div class="dir-preview" v-else>
-            <div>{{ preview.file.filename }} 文件夹</div>
-            <div>子文件：{{ preview.file.files.length }} 个</div>
-            <div>创建于：{{ dateView(preview.file.cTime) }}</div>
-        </div>
 
-        <div class="preview-btns">
-            <div class="close-preview" @click="preview = null">
-                <img src="../assets/close.png" />
-            </div>
-            <div class="app-start close-preview" @click="rm(preview.file)">
-                在新窗口中打开
-            </div>
-            <div class="rm close-preview" @click="rm(preview.file)">
-                删除这个文件
+            <div class="preview-btns">
+                <div class="close-preview" @click="preview = null">
+                    <img src="../assets/close.png" />
+                </div>
+                <div class="app-start close-preview" @click="rm(preview.file)">
+                    在新窗口中打开
+                </div>
+                <div class="rm close-preview" @click="rm(preview.file)">
+                    删除这个文件
+                </div>
             </div>
         </div>
-    </div>
+    </transition>
 
     <div class="function">
         <span class="icon-wrap" @click="mkdir"><img src="../assets/new-folder.png" /></span>
@@ -79,9 +84,9 @@ import arrayBufferToBase64 from '../utils/arrayBufferToBase64';
 import fileOpener from '../utils/fileOpener'; 
 
 
-let todo = _id => (cmd, process = 'none') => {
+let todo = _id => (cmd, preprocess = 'none') => {
     return http.post('/api/nfs/cmd', {
-        cmd, _id, process
+        cmd, _id, preprocess
     }); 
 }
 
@@ -170,10 +175,11 @@ export default {
                     fileOpener(this.nfsShell, file, this.pathAdd(file.filename)); 
                 }
             } else {
-                this.nfsShell(`read ${this.pathAdd(file.filename)}`).then(res => {
+                this.nfsShell(`read ${this.pathAdd(file.filename)}`, 'url').then(res => {
                     this.preview = {
                         file: file, 
-                        data: res.data.data
+                        data: res.data.data,
+                        url: res.data.url
                     }
                 }); 
             }
@@ -238,12 +244,21 @@ export default {
 
 
 <style lang="sass">
+.preview-load-enter-active, .preview-load-leave-active 
+
+/* .fade-leave-active in below version 2.1.8 */ 
+.preview-load-enter, .preview-load-leave-to
+    opacity: 0
+    transform: translateY(30px)
+
 .folder 
+    overflow: hidden
     font-size: 0
     .preview, .files, .function
         font-size: 16px
         box-sizing: border-box
     .preview
+        transition: all .3s
         position: absolute
         bottom: 0
         height: 30%

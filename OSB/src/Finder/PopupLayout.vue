@@ -157,7 +157,7 @@ export default {
 	/* top: 100px;  */
 	/* left: 200px; */
 	/* border: 1px solid rgba(0, 0, 0, 0.1); */
-	box-shadow: 0 48px 48px -24px rgba(0, 0, 0, .3); 
+	box-shadow: 0 96px 64px -24px rgba(0, 0, 0, .3); 
 	box-sizing: border-box; 
 	background-color: #FFF;
 	/* overflow: hidden; */
@@ -173,6 +173,7 @@ export default {
 	background-color: #FFF; 
 	border-bottom: 1px solid #DDD; 
 	box-sizing: border-box; 
+	padding-left: 1em;
 }
 
 .resizer {
