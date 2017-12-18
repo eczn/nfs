@@ -29,8 +29,17 @@
         </div>
         <span t class="input-area">
             <p class="path"></p>
-            <span>$ {{ pathStr }} > </span>
-            <input @keydown="down" class="cmd-input" ref="cmdInput" id="test" autofocus t @keydown.enter="exec" type="text" v-model="cmd">
+            <input :size="this.cmd.length + 10"
+                spellcheck="false" @keydown="down"
+                class="cmd-input"
+                ref="cmdInput"
+                id="cmd-input-dom"
+                autofocus t 
+                @keydown.enter="exec"
+                type="text"
+                v-model="cmd"
+            />
+            <label class="cmd-input-label" for="cmd-input-dom"><span>$ {{ pathStr }} > </span>{{ cmd }}</label>
         </span>
     </div>
 </template>
@@ -255,15 +264,46 @@ export default {
 }
 
 .cli .cmd-input {
+    position: absolute; 
+    top: 0; 
+    left: 0;
+    width: 100%; 
+    height: 100%;
     background: none;
     font-family: inherit;  
     border: none; 
     color: #FFF; 
+    opacity: 0;
 }
 
 .cli .cmd-input:focus {
     outline: none; 
+}
 
+.cmd-input-label {
+    display: inline;
+    word-break:break-all;
+}
+
+@keyframes cursorAni {
+    0% {
+        opacity: 0;
+    } 100% {
+        opacity: 1;
+    }
+}
+
+.cli .cmd-input:focus + .cmd-input-label::after {
+    content: "|"; 
+}
+
+.cmd-input-label::after {
+    /* content: "|";  */
+    animation-name: cursorAni; 
+    animation-iteration-count: infinite; 
+    animation-fill-mode: both; 
+    animation-duration: 1.4s;
+    animation-timing-function: cubic-bezier(1,-3.58, 0, 4.12) 
 }
 
 .dir-filename {
