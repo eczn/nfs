@@ -9,6 +9,7 @@ import jpg from './jpg.png';
 import png from './jpg.png'; 
 import mail from './mail.png'; 
 import txt from './txt.png';
+import file from './file.png';
 // import zip from './zip.png'; 
 
 export default {
@@ -22,5 +23,6 @@ export default {
     png,
     mail,
     txt,
+    file
     // zip
 }
