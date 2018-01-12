@@ -258,6 +258,7 @@ Nfs.prototype.touch = function(path_str, ext){
             isDirectory: false,
             cTime: Date.now(), 
             size: 0, 
+            who: null,
             A1: []
         }); 
     }
@@ -313,6 +314,19 @@ Nfs.prototype.mkdir = function(path_str){
     } else {
         this._mkdirOnNode(dir, filename); 
     }
+
+    return this.store2disk(); 
+}
+
+/**
+ * @description 修改文件权限 
+ * @param {String} path_str 
+ * @param {String} who 
+ */
+Nfs.prototype.chown = function(path_str, who){
+    const file = this.ls(path_str)
+
+    file.who = who; 
 
     return this.store2disk(); 
 }
