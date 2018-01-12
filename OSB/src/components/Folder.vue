@@ -22,7 +22,14 @@
         <div class="textarea">
             <h1 class="title">$ ls {{ pathStr }} </h1>
         </div>
-        <span @click="outside" v-if="pathList.length >= 2" class="cd-outside">/..</span>
+        <span @click="outside" v-if="pathList.length >= 2" class="cd-outside">
+            <!-- <img src="../assets/back.png" class="test"> -->
+
+            <file :file="{
+                isDirectory: true,
+                filename: '返回上级'
+            }" :path-str="pathStr"></file>
+        </span>
         <file @click="open(item)" :path-str="pathStr"
             v-for="(item, idx) in files" :key="idx" :file="item"
             :selected="
@@ -38,9 +45,10 @@
                 <div>文件大小：{{ preview.file.size }} 字节</div>
                 <div>实际占用：{{ preview.file.A1.length * df.BLOCK_SIZE }} 字节</div>
                 <div>创建于：{{ dateView(preview.file.cTime) }}</div>
-                <div class="txt" v-if="preview.file.ext === 'txt'">
-                    {{ preview.data.map(e => String.fromCharCode(e)).join('') || '空文件' }}
-                </div>
+                <div>所有者：{{ preview.file.who || '无' }}</div>
+                <div class="txt" v-if="preview.file.ext === 'txt'"
+                    v-html="asText(preview.data) || '空文件'"
+                ></div>
                 <div class="png" v-else-if="preview.file.ext === 'png'">
                     <img :src="preview.url" />
                 </div>
@@ -53,13 +61,15 @@
                 <div>{{ preview.file.filename }} 文件夹</div>
                 <div>子文件：{{ preview.file.files.length }} 个</div>
                 <div>创建于：{{ dateView(preview.file.cTime) }}</div>
+                <div>所有者：{{ preview.file.who }}</div>
             </div>
 
             <div class="preview-btns">
                 <div class="close-preview" @click="preview = null">
+                    关闭
                     <img src="../assets/close.png" />
                 </div>
-                <div class="app-start close-preview" @click="rm(preview.file)">
+                <div class="app-start close-preview" @click="newWindow(preview.file)">
                     在新窗口中打开
                 </div>
                 <div class="rm close-preview" @click="rm(preview.file)">
@@ -77,6 +87,7 @@
             </label>
             <input hidden id="file-upload" @change="change" type="file" ref="file" />
         </span>
+        <span class="icon-wrap" @click="initLoad"><img src="../assets/reload.png" /></span>
     </div>
 </div>
 </template>
@@ -103,6 +114,10 @@ export default {
     props: {
         nfs: {
             type: Object, 
+            required: true
+        },
+        user: {
+            type: Object,
             required: true
         }
     },
@@ -134,7 +149,7 @@ export default {
         
         this.initLoad();
 
-        this.openCli(); 
+        // this.openCli(); 
     },
     methods: {
         dateView(ts){
@@ -165,14 +180,18 @@ export default {
             })
         },
         open(file){
+            if (file.who !== this.user.username) return alert('拒绝访问该文件'); 
+
             this.clickTime = this.clickTime + 1; 
-            setTimeout(() => {
+            setTimeout(() => {              
                 this.clickTime = 0
             }, 200);
 
             if (this.clickTime === 2){
                 // double click
                 // 此处调出其他程序 
+                clearTimeout(this.open.previewTimer); 
+
                 if (file.isDirectory){
                     console.log(file)
                     this.pathList.push(file.filename); 
@@ -182,13 +201,36 @@ export default {
                     fileOpener(this.nfsShell, file, this.pathAdd(file.filename)); 
                 }
             } else {
-                this.nfsShell(`read ${this.pathAdd(file.filename)}`, 'url').then(res => {
-                    this.preview = {
-                        file: file, 
-                        data: res.data.data,
-                        url: res.data.url
-                    }
-                }); 
+                this.open.previewTimer = setTimeout(() => {
+                    this.nfsShell(`read ${this.pathAdd(file.filename)}`, 'url').then(res => {
+                        this.preview = {
+                            file: file, 
+                            data: res.data.data,
+                            url: res.data.url
+                        }
+                    }); 
+                }, 200); 
+            }
+        },
+        one$two(one, two){
+            if (!this.one$two.clickTime) this.one$two.clickTime = 0; 
+
+            this.one$two.clickTime = this.one$two.clickTime + 1; 
+
+            setTimeout(() => {              
+                this.one$two.clickTime = 0
+            }, 200);
+
+            if (this.one$two.clickTime === 2){
+                // double click
+                // 此处调出其他程序 
+                clearTimeout(this.one$two.previewTimer); 
+
+                two && two(); 
+            } else {
+                this.one$two.previewTimer = setTimeout(() => {
+                    one && one(); 
+                }, 200); 
             }
         },
         change(e){
@@ -197,29 +239,44 @@ export default {
 			let name = file.name; 
 			let pos = name.lastIndexOf('.'); 
 			let ext = name.substring(pos + 1); 
-			let filename = name.substring(0, pos); 
+            let filename = name.substring(0, pos); 
+            let target = this.pathAdd(filename);
+            let username;
+            let loadUser = http.get('/api/user/me');
+            let loadB64 = loadAsDataURL(file); 
+            let touchFile = this.nfsShell(`touch ${target} ${ext}`); 
 
-			loadAsDataURL(file).then(base64 => {
-                let target = this.pathAdd(filename);
+            Promise.all([
+                loadUser, 
+                loadB64, 
+                touchFile
+            ]).then(([res, base64, touchOK]) => {
+                username = res.data.username; 
+                let p = base64.indexOf('base64,') + 'base64,'.length; 
+                base64 = base64.substring(p); 
 
-                this.nfsShell(`touch ${target} ${ext}`).then(ok => {
-                    let p = base64.indexOf('base64,') + 'base64,'.length; 
-                    base64 = base64.substring(p); 
-
-                    return http.post('/api/nfs/cmd', {
-                        _id: this.nfs._id,
-                        cmd: `write ${target} %buf%`, 
-                        buf_base64: base64
-                    })
-                }).then(allDone => {
-                    this.initLoad();
+                return http.post('/api/nfs/cmd', {
+                    _id: this.nfs._id,
+                    cmd: `write ${target} %buf%`, 
+                    buf_base64: base64
                 })
-			}); 
+            }).then(writeOk => {
+                return this.nfsShell(`chown ${target} ${username}`); 
+            }).then(allDone => {
+                this.initLoad(); 
+            });
         },
         mkdir(){
             let dirname = window.prompt('输入新文件夹名'); 
-            
-            this.nfsShell(`mkdir ${this.pathStr + '/' + dirname}`).then(ok => {
+            if (!dirname) return; 
+
+            Promise.all([
+                http.get('/api/user/me'), 
+                this.nfsShell(`mkdir ${this.pathAdd(dirname)}`)
+            ]).then(([res, mkdirSucc]) => {
+                let username = res.data.username; 
+                return this.nfsShell(`chown ${this.pathAdd(dirname)} ${username}`); 
+            }).then(allDone => {
                 this.initLoad(); 
             })
         },
@@ -247,6 +304,16 @@ export default {
         },
         openCli(){
             fileOpener.cli(this.nfsShell); 
+        },
+        asText(data){
+            let buf = new Uint8Array(data); 
+            let dnc = new TextDecoder(); 
+            let text = dnc.decode(buf); 
+
+            return text.replace(/\n/g, '<br />');
+        },
+        newWindow(file){
+            fileOpener(this.nfsShell, file, this.pathAdd(file.filename)); 
         }
     }
 }
@@ -282,6 +349,8 @@ export default {
         .close-preview
             cursor: pointer
             padding: 1em
+            img 
+                width: 1em
         .close-preview:hover 
             background-color: #DDD
 
@@ -317,6 +386,7 @@ export default {
             text-align: center
             vertical-align: middle
         .icon-wrap 
+            cursor: pointer
             height: 100%
             display: inline-block
             width: 40px
@@ -332,4 +402,11 @@ export default {
         line-height: 1.5
     .open-cli 
         cursor: pointer
+
+    .txt 
+        width: 70%
+        height: 100px
+        overflow-y: scroll
+        border: 1px solid #DDD
+        margin-top: 1em;
 </style>

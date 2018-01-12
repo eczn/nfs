@@ -8,7 +8,6 @@
                     <span t>{{ line.cmd }}</span>
                 </span>
 
-                
                 <div class="error" v-if="line.err">
                     <div t>{{ line.msg }}</div>
                 </div>
@@ -46,13 +45,15 @@
 
 <script>
 import fileOpener from '../utils/fileOpener'; 
+import http from '../utils/http.client';
 
 let nfsTable = {
     'ls': true, 
     'df': true, 
     'read': true,
-    'touch': true,
-    'mkdir': true
+    // 'touch': true,
+    'mkdir': true,
+    'rm': true
 }
 
 export default {
@@ -241,6 +242,31 @@ export default {
                     err: true
                 }); 
                 this.cmd = ''; 
+            })
+        },
+        chown(e, who){
+            this.nfsShell(`chown ${this.pathAdd(e)} ${who}`).then(res => {
+
+            })
+        },
+        touch(e, ext, content){
+            let username
+            http.get('/api/user/me').then(res => {
+                let { username } = res.data; 
+                return username; 
+            }).then(u => {
+                username = u; 
+
+                return this.nfsShell(`touch ${this.pathAdd(e)} ${ext}`); 
+            }).then(touchOK => {
+                return this.nfsShell(`chown ${this.pathAdd(e)} ${username}`); 
+            }).then(allDone => {
+                let data = {}
+                data.path = this.pathStr; 
+                data.cmd = this.preCmd[0];
+                this.history.push(data); 
+
+                this.cmd = '';
             })
         }
     }

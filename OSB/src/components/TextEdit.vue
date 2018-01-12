@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div>{{ asText }}</div>
+        <div v-html="asText"></div>
         <div class="bottom-bar">
             字数：{{ buffer.length }}
         </div>
@@ -31,9 +31,11 @@ export default {
     }, 
     computed: {
         asText(){
-            return this.buffer.reduce((str, e) => {
-                return str + String.fromCharCode(e); 
-            }, ''); 
+            let buf = new Uint8Array(this.buffer); 
+            let dnc = new TextDecoder(); 
+            let text = dnc.decode(buf); 
+
+            return text.replace(/\n/g, '<br />');
         }
     }, 
     created(){

@@ -29,10 +29,12 @@ export default {
             nfs_list: [],
             selected: null,
             clickTime: 0,
+            user: {}, 
             bg: 'http://localhost/lib/egg.png' 
         }
     }, 
     created(){
+        this.loadMe(); 
         this.loadNfs(); 
         this.loadBg(); 
         this.$eBus.$on('bgReload', () => {
@@ -40,6 +42,11 @@ export default {
         })
     },
     methods: {
+        loadMe(){
+            return http.get('/api/user/me').then(res => {
+                this.user = res.data; 
+            }); 
+        },
         loadBg(){
             this.bg = window.localStorage.getItem('bg') || this.bg; 
         }, 
@@ -47,10 +54,8 @@ export default {
             http.get('/api/nfs').then(res => {
                 this.nfs_list = res.data; 
 
-                this.openFolder(this.nfs_list[0]);
-                this.openFolder(this.nfs_list[0]);
-                // this.openFolder(this.nfs_list[1]);
-                // this.nfs_list.forEach(this.openFolder.bind(this));
+                // this.openFolder(this.nfs_list[0]);
+                // this.openFolder(this.nfs_list[0]);
             })
         },
         newNfs(){
@@ -71,9 +76,11 @@ export default {
                 console.log(Folder)
                 let folder = this.$ppp.create({
                     type: 'modal', 
+                    title: `[Finder] 用户名: ${this.user.username}`, 
                     component: Folder,
                     vbind: {
-                        nfs: nfs
+                        nfs: nfs,
+                        user: this.user
                     }
                 });
                 folder.launch(); 

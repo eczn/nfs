@@ -5,7 +5,7 @@
             <p>{{ file.filename }}</p>
         </div>
         <div v-else class="file-item file-inner">
-            <img class="file-icon" :src="icon[file.ext]" />
+            <img class="file-icon" :src="icon[file.ext] || icon.file" />
             <p>{{ file.filename + '.' + file.ext }}</p>
         </div>
     </div>
