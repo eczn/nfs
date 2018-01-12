@@ -40,6 +40,18 @@ router.post('/login', function(req, res){
     })
 }); 
 
+router.get('/me', function(req, res){
+    let token = req.cookies['user-token']; 
+    
+    if (token){
+        auth.de(token).then(user => {
+            rps.send2000(res, user); 
+        });
+    } else {
+        rps.send2000(res, null); 
+    }
+})
+
 router.get('/logout', function(req, res){
     console.log('!'); 
 
