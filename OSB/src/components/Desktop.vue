@@ -8,7 +8,7 @@
                 :class="{ selected: selected ? nfs._id === selected._id : selected }"
                 v-for="(nfs, idx) in nfs_list" :key="idx">
                 <img class="disk-icon" src="../assets/disk.svg" />
-                <p>{{ nfs._id }}</p>
+                <p>{{ nfs.owner.username }}: {{ nfs._id }}</p>
             </div>
             <div @click="newNfs" class="disk">
                 <img class="disk-icon" src="../assets/disk-create.svg" />

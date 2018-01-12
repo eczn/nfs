@@ -24,7 +24,7 @@ set.create = function(user_id){
 set.list = function(user_id){
     return diskModel.find({
         user_id
-    }); 
+    }).populate('owner'); 
 }
 
 set.open = function(_id){

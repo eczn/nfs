@@ -180,7 +180,7 @@ export default {
             })
         },
         open(file){
-            if (file.who !== this.user.username) return alert('拒绝访问该文件'); 
+            if (file.who !== this.user.username) return alert(`该文件属于 ${file.who} 拒绝访问`); 
 
             this.clickTime = this.clickTime + 1; 
             setTimeout(() => {              
