@@ -24,8 +24,10 @@
 					color: item.style.color
 				}"
 				class="folder-header">
+				<span @click="item.active = false">
+					<img class="close-btn" src="../assets/close.png" />
+				</span>
 				{{ item.title || 'Finder' }}
-				<span @click="item.active = false">关闭</span>
 			</div>
 			<!-- <div class="folder-header" style="background-color: #FFF"></div> -->
 
@@ -201,6 +203,13 @@ export default {
 	background-position: right bottom; 
 	/* background-color: #FFF;  */
 	background-image: url('../assets/resize.png');
+}
+
+.close-btn {
+	cursor: pointer;
+	width: 1.3em;
+	vertical-align: middle;
+	display: inline-block;
 }
 
 .modal-outter {
