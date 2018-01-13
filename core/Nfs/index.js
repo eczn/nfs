@@ -335,25 +335,9 @@ Nfs.prototype.chown = function(path_str, who){
  * @description 列出 nfs 磁盘信息
  */
 Nfs.prototype.df = function(){
-    let {
-        DISK_BASE,
-        DISK_LOCATION,
-        DISK_SIZE,
-        BLOCK_SIZE,
-        BLOCK_COUNT,
-        NFS_SIZE,
-        RAW_SIZE
-    } = this.disk;
-
-    let df = {
-        DISK_BASE,
-        DISK_LOCATION,
-        DISK_SIZE,
-        BLOCK_SIZE,
-        BLOCK_COUNT,
-        NFS_SIZE,
-        RAW_SIZE
-    }
+    let df = JSON.parse(
+        JSON.stringify(this.disk)
+    ); 
 
     df.REMAIN_SIZE = this.FAT.reduce((sum, cur) => {
         if (cur === 0){
