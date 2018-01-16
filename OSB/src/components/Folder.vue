@@ -75,6 +75,9 @@
                 <div class="rm close-preview" @click="rm(preview.file)">
                     删除这个文件
                 </div>
+                <div class="rm close-preview" @click="rename(preview.file)">
+                    重命名
+                </div>
             </div>
         </div>
     </transition>
@@ -314,6 +317,17 @@ export default {
         },
         newWindow(file){
             fileOpener(this.nfsShell, file, this.pathAdd(file.filename)); 
+        },
+        rename(file){
+            let newName = window.prompt(); 
+
+            if (!newName || !newName.trim()) return; 
+
+            let cmd = 'rename ' + this.pathAdd(file.filename) + ' ' + newName; 
+
+            this.nfsShell(cmd).then(res => {
+                this.initLoad(); 
+            })
         }
     }
 }

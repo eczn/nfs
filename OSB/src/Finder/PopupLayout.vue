@@ -33,7 +33,7 @@
 
 			<!-- <transition :name="item.transitionName || item.type"> -->
 
-			<div>
+			<div style="height: 100%">
 				<component
 					:is="item.component"
 					v-bind="item[':'] || item.vbind"

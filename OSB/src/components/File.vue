@@ -6,7 +6,7 @@
         </div>
         <div v-else class="file-item file-inner">
             <img class="file-icon" :src="icon[file.ext] || icon.file" />
-            <p>{{ file.filename + '.' + file.ext }}</p>
+            <p class="file-name">{{ file.filename + '.' + file.ext }}</p>
         </div>
     </div>
 </template>
@@ -38,23 +38,25 @@ export default {
 }
 </script>
 
-<style>
-.file {
-    display: inline-block; 
-    width: 135px; 
-    margin-bottom: 1em; 
-    min-height: 100px; 
-    vertical-align: top; 
-    text-align: center; 
-    user-select: none; 
-    cursor: pointer;
-}
+<style lang="sass">
+.file 
+    display: inline-block
+    width: 135px
+    margin-bottom: 1em
+    min-height: 100px
+    vertical-align: top
+    text-align: center
+    user-select: none
+    cursor: pointer
 
-.file-icon {
-    width: 96px;
-}
+    .file-icon 
+        width: 96px
 
-.selected {
-    background-color: #DDD; 
-}
+    .selected 
+        background-color: #DDD
+
+    .file-name 
+        word-wrap: break-word
+        padding: 0 .5em
+    
 </style>

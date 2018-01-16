@@ -62,6 +62,8 @@ export default {
             http.post('/api/nfs').then(ok => {
                 let newNfs = ok.data; 
 
+                newNfs.owner = JSON.parse(JSON.stringify(this.user)); 
+
                 this.nfs_list.push(newNfs); 
             })
         },

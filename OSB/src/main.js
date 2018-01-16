@@ -5,7 +5,7 @@ import App from './App';
 import router from './router';
 import OSB from './osb'; 
 import FONT from './font'; 
-import Finder from './Finder'
+import Finder from './Finder';
 
 Vue.config.productionTip = false;
 
