@@ -221,7 +221,7 @@ Nfs.prototype.write = function(path_str, buf_data){
     file_node.size = newSize; 
 
     /**
-     * Write Data 
+     * Write Data 回写
      */
     return this.store2disk().then(ok => {
         return this.disk.writeList(
@@ -231,7 +231,6 @@ Nfs.prototype.write = function(path_str, buf_data){
     }).catch(err => {
         console.log(err); 
     }); 
-    
 }
 
 /**
@@ -341,7 +340,7 @@ Nfs.prototype.df = function(){
 
     df.REMAIN_SIZE = this.FAT.reduce((sum, cur) => {
         if (cur === 0){
-            sum = sum + BLOCK_SIZE; 
+            sum = sum + df.BLOCK_SIZE; 
         }
 
         return sum; 

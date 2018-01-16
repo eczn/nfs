@@ -13,14 +13,11 @@ function Disk(config){
     // this.config = config; 
     Object.assign(this, config);    
 
-    this.ready = new Promise(disk_res => {
-
     /**
      * 初始化 
      */
-    init(this).then(disk_hanle => {
-            disk_res('nfs init ok'); 
-        }); 
+    this.ready = init(this).then(disk_hanle => {
+        return 'nfs init ok'
     }); 
 }; 
 
@@ -105,6 +102,11 @@ Disk.prototype.writeList = function(block_positions, buf){
     }); 
 }
 
+/**
+ * @description 生写入 
+ * @param {Buffer} buf 
+ * @param {Number} position 
+ */
 Disk.prototype.writeRaw = function(buf, position){
     return fs.write(
         this.disk_fd, 
