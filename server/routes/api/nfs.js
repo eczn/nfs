@@ -3,6 +3,7 @@ const express = require('express')
     , rps = require('../../utils/rps')
     , diskSet = require('../../utils/disk-set')
     , temp = require('../../utils/temp_file')
+    , md = require('../../utils/md')
 
 /**
  * @description get user's disk 
@@ -31,6 +32,14 @@ router.post('/', function(req, res){
 
         rps.send5000(res, err); 
     }); 
+}); 
+
+router.post('/md-render', function(req, res){
+    let { text } = req.body; 
+
+    let html = md.render(text)
+
+    rps.send2000(res, html); 
 }); 
 
 /**
